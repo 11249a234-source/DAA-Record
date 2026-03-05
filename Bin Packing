@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100
+
+void print(int bins){ printf("Total bins used: %d\n", bins); }
+
+/* ---------- FIRST FIT ---------- */
+void firstFit(int w[], int n, int c){
+    int rem[MAX], bins = 0;
+    for(int i=0;i<n;i++){
+        int j;
+        for(j=0;j<bins;j++)
+            if(rem[j] >= w[i]){ rem[j] -= w[i]; break; }
+        if(j==bins) rem[bins++] = c - w[i];
+    }
+    printf("\nFirst Fit:\n"); print(bins);
+}
+
+/* ---------- FIRST FIT DECREASING ---------- */
+int cmp(const void *a,const void *b){ return *(int*)b-*(int*)a; }
+
+void firstFitDec(int w[], int n, int c){
+    int temp[MAX];
+    for(int i=0;i<n;i++) temp[i]=w[i];
+    qsort(temp,n,sizeof(int),cmp);
+    printf("\nFirst Fit Decreasing:\n");
+    firstFit(temp,n,c);
+}
+
+/* ---------- BEST FIT ---------- */
+void bestFit(int w[], int n, int c){
+    int rem[MAX], bins=0;
+    for(int i=0;i<n;i++){
+        int best=-1, min=c+1;
+        for(int j=0;j<bins;j++)
+            if(rem[j]>=w[i] && rem[j]-w[i]<min){
+                best=j; min=rem[j]-w[i];
+            }
+        if(best!=-1) rem[best]-=w[i];
+        else rem[bins++]=c-w[i];
+    }
+    printf("\nBest Fit:\n"); print(bins);
+}
+
+/* ---------- MAIN Function ---------- */
+int main(){
+    int n,c,w[MAX];
+    printf("Enter number of items & capacity: ");
+    scanf("%d%d",&n,&c);
+    printf("Enter weights:\n");
+    for(int i=0;i<n;i++) scanf("%d",&w[i]);
+
+    firstFit(w,n,c);
+    firstFitDec(w,n,c);
+    bestFit(w,n,c);
+    return 0;
+}
